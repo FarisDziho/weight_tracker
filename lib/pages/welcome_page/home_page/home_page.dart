@@ -13,14 +13,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  // FirebaseFirestore firestore = FirebaseFirestore.instance;
-
-  void deleteRecord(String dateTime) {
-    var uid = getUserUid(context);
-    Provider.of<Store>(context, listen: false)
-        .deleteRecord(uid, dateTime, context);
-  }
-
   void showAddRecordDialog() {
     showDialog(
         context: context,
@@ -30,7 +22,11 @@ class _HomePageState extends State<HomePage> {
             actions: [
               GestureDetector(
                 onTap: () => Navigator.of(context).pop(),
-                child: Container(child: Text("Zatvori")),
+                child: Container(
+                    child: Icon(
+                  Icons.close,
+                  size: 20,
+                )),
               )
             ],
           );
@@ -39,6 +35,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    print("da li se rebuilda");
     String userUid = getUserUid(context);
     return SafeArea(
       child: GestureDetector(
@@ -67,7 +64,6 @@ class _HomePageState extends State<HomePage> {
           ),
           body:
               Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-            // WeightForm(),
             GestureDetector(
               onTap: showAddRecordDialog,
               child: Container(
@@ -78,7 +74,6 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            // SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                   stream: Provider.of<Store>(context)
@@ -104,7 +99,7 @@ class _HomePageState extends State<HomePage> {
                         itemCount: snapshots.data.size,
                         itemBuilder: (BuildContext context, int index) {
                           var data = snapshots.data.docs[index].data();
-                          return CustomListTile(userUid,
+                          return CustomListTile(userUid, data['recordId'],
                               data['weight'].toString(), data['dateTime']);
                         });
                   }),

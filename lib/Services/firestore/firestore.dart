@@ -8,36 +8,39 @@ class Store {
 
   Store(this.firestore);
 
-  void addRecord(String uid, DateTime dateTime, WeightRecord wg) {
+  void addRecord(
+      String uid, String recordId, DateTime dateTime, WeightRecord wg) {
     firestore
         .collection('users')
         .doc(uid)
         .collection("weight_records")
-        .doc(dateTime.toIso8601String())
+        .doc(recordId)
         .set(wg.toJson())
         .catchError((onError) {
       print(onError);
     });
   }
 
-  void updateRecord(String userId, String dateTime, WeightRecord wg) {
+  void updateRecord(
+      String userId, String recordId, String dateTime, WeightRecord wg) {
     firestore
         .collection('users')
         .doc(userId)
         .collection("weight_records")
-        .doc(dateTime)
+        .doc(recordId)
         .update(wg.toJson())
         .catchError((onError) {
       print(onError);
     });
   }
 
-  void deleteRecord(String uid, String dateTime, BuildContext context) {
+  void deleteRecord(
+      String uid, String recordId, String dateTime, BuildContext context) {
     firestore
         .collection('users')
         .doc(uid)
         .collection('weight_records')
-        .doc(dateTime)
+        .doc(recordId)
         .delete()
         .catchError((err) {
       ScaffoldMessenger.of(context)

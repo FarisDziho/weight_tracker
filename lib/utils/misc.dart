@@ -12,7 +12,7 @@ String getUserUid(BuildContext context) {
 
 String getDateFormat(String dateTime) {
   var parsedDate = DateTime.parse(dateTime);
-  return DateFormat('dd - MM - yyyy').format(parsedDate);
+  return DateFormat('dd - MM - yyyy : hh -mm').format(parsedDate);
 }
 
 double getNumberWith2Digits(String stringNumber) {

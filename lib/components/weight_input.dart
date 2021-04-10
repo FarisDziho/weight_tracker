@@ -6,21 +6,26 @@ import 'package:weight_tracker/Services/firestore/firestore.dart';
 import '../utils/validator.dart';
 import '../models/enteties/weight_record.dart';
 import '../utils/misc.dart';
+import 'package:uuid/uuid.dart';
 
 class WeightForm extends StatefulWidget {
   String textController = '';
   String dateTime;
   bool isEdit = false;
   String userUid;
-  WeightForm.editWeight(String userUid, String weight, String dateTime) {
-    this.userUid = userUid;
-    this.textController = weight;
-    this.dateTime = dateTime;
-    this.isEdit = true;
-  }
+  String recordId;
+
   WeightForm() {
     textController = '';
     isEdit = false;
+  }
+  WeightForm.editWeight(
+      String userUid, String recordId, String weight, String dateTime) {
+    this.userUid = userUid;
+    this.recordId = recordId;
+    this.textController = weight;
+    this.dateTime = dateTime;
+    this.isEdit = true;
   }
 
   _WeightFormState createState() => _WeightFormState(textController);
@@ -31,20 +36,22 @@ class _WeightFormState extends State<WeightForm> {
 
   final TextEditingController _weightController = new TextEditingController();
 
+  final _fromKey = GlobalKey<FormState>();
+
   _WeightFormState(String textController) {
     this._weightController.text = textController;
   }
 
-  final _fromKey = GlobalKey<FormState>();
-
   void addRecord() {
     if (_fromKey.currentState.validate()) {
+      String recordId = Uuid().v4();
       double parsedWeight = getNumberWith2Digits(_weightController.text);
       var dateTime = DateTime.now();
       String uid = getUserUid(context);
-      WeightRecord wg = WeightRecord(parsedWeight, dateTime);
+      WeightRecord wg = WeightRecord(recordId, parsedWeight, dateTime);
 
-      Provider.of<Store>(context, listen: false).addRecord(uid, dateTime, wg);
+      Provider.of<Store>(context, listen: false)
+          .addRecord(uid, recordId, dateTime, wg);
 
       _weightController.text = "";
       hideKeyboard(context);
@@ -55,12 +62,13 @@ class _WeightFormState extends State<WeightForm> {
   void editRecord() {
     if (_fromKey.currentState.validate()) {
       double parsedWeight = getNumberWith2Digits(_weightController.text);
-      var dateTime = this.widget.dateTime;
+      var dateTime = DateTime.parse(this.widget.dateTime);
+      String recordId = this.widget.recordId;
       String uid = this.widget.userUid;
-      WeightRecord wg = WeightRecord(parsedWeight, DateTime.parse(dateTime));
+      WeightRecord wg = WeightRecord(recordId, parsedWeight, dateTime);
 
       Provider.of<Store>(context, listen: false)
-          .updateRecord(uid, dateTime, wg);
+          .updateRecord(uid, recordId, dateTime.toString(), wg);
       _weightController.text = "";
       hideKeyboard(context);
       Navigator.of(context).pop();
