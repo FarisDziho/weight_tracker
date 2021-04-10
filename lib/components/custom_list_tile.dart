@@ -67,6 +67,7 @@ class _CustomListTileState extends State<CustomListTile> {
         title: Row(children: [
           Container(
             width: 90,
+            padding: EdgeInsets.only(left: 5),
             child: Text("${this.widget.weight} Kg"),
           ),
           Flexible(child: Text("${getDateFormat(this.widget.dateTime)}")),
