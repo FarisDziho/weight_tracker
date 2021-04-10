@@ -5,8 +5,8 @@ import 'package:weight_tracker/Services/Auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:weight_tracker/components/custom_list_tile.dart';
 import 'package:weight_tracker/utils/misc.dart';
-import '../../../components/weight_input.dart';
-import '../../../Services/firestore/firestore.dart';
+import '../../components/weight_input.dart';
+import '../../Services/firestore/firestore.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
