@@ -5,8 +5,8 @@ import 'package:weight_tracker/Services/Auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:weight_tracker/components/custom_list_tile.dart';
 import 'package:weight_tracker/utils/misc.dart';
-import '../../components/weight_input.dart';
-import '../../Services/firestore/firestore.dart';
+import '../../../components/weight_input.dart';
+import '../../../Services/firestore/firestore.dart';
 
 class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
@@ -21,9 +21,25 @@ class _HomePageState extends State<HomePage> {
         .deleteRecord(uid, dateTime, context);
   }
 
+  void showAddRecordDialog() {
+    showDialog(
+        context: context,
+        builder: (_) {
+          return new AlertDialog(
+            content: WeightForm(),
+            actions: [
+              GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(child: Text("Zatvori")),
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
-    String uid = getUserUid(context);
+    String userUid = getUserUid(context);
     return SafeArea(
       child: GestureDetector(
         // onTap: () => hideKeyboard(context),
@@ -41,7 +57,7 @@ class _HomePageState extends State<HomePage> {
                     child: Text(
                       "Sign Out",
                       style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 20,
                       ),
                     ),
                   ),
@@ -49,15 +65,26 @@ class _HomePageState extends State<HomePage> {
               ),
             ],
           ),
-          body: Column(children: [
-            WeightForm(),
-            SizedBox(height: 20),
+          body:
+              Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+            // WeightForm(),
+            GestureDetector(
+              onTap: showAddRecordDialog,
+              child: Container(
+                padding: EdgeInsets.all(20),
+                color: Colors.yellow,
+                child: Center(
+                  child: (Text("Add new weight")),
+                ),
+              ),
+            ),
+            // SizedBox(height: 20),
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
                   stream: Provider.of<Store>(context)
                       .firestore
                       .collection('users')
-                      .doc(uid)
+                      .doc(userUid)
                       .collection("weight_records")
                       .orderBy('dateTime', descending: true)
                       .snapshots(),
@@ -69,12 +96,16 @@ class _HomePageState extends State<HomePage> {
                     if (snapshots.connectionState == ConnectionState.waiting)
                       return Center(child: CircularProgressIndicator());
 
+                    if (snapshots.data.size == 0) {
+                      return Center(child: Text("You have 0 records"));
+                    }
+
                     return ListView.builder(
                         itemCount: snapshots.data.size,
                         itemBuilder: (BuildContext context, int index) {
                           var data = snapshots.data.docs[index].data();
-                          return CustomListTile(
-                              uid, data['weight'].toString(), data['dateTime']);
+                          return CustomListTile(userUid,
+                              data['weight'].toString(), data['dateTime']);
                         });
                   }),
             ),

@@ -8,13 +8,32 @@ import '../models/enteties/weight_record.dart';
 import '../utils/misc.dart';
 
 class WeightForm extends StatefulWidget {
-  _WeightFormState createState() => _WeightFormState();
+  String textController = '';
+  String dateTime;
+  bool isEdit = false;
+  String userUid;
+  WeightForm.editWeight(String userUid, String weight, String dateTime) {
+    this.userUid = userUid;
+    this.textController = weight;
+    this.dateTime = dateTime;
+    this.isEdit = true;
+  }
+  WeightForm() {
+    textController = '';
+    isEdit = false;
+  }
+
+  _WeightFormState createState() => _WeightFormState(textController);
 }
 
 class _WeightFormState extends State<WeightForm> {
   FirebaseFirestore firestore = FirebaseFirestore.instance;
 
   final TextEditingController _weightController = new TextEditingController();
+
+  _WeightFormState(String textController) {
+    this._weightController.text = textController;
+  }
 
   final _fromKey = GlobalKey<FormState>();
 
@@ -29,6 +48,22 @@ class _WeightFormState extends State<WeightForm> {
 
       _weightController.text = "";
       hideKeyboard(context);
+      Navigator.of(context).pop();
+    }
+  }
+
+  void editRecord() {
+    if (_fromKey.currentState.validate()) {
+      double parsedWeight = getNumberWith2Digits(_weightController.text);
+      var dateTime = this.widget.dateTime;
+      String uid = this.widget.userUid;
+      WeightRecord wg = WeightRecord(parsedWeight, DateTime.parse(dateTime));
+
+      Provider.of<Store>(context, listen: false)
+          .updateRecord(uid, dateTime, wg);
+      _weightController.text = "";
+      hideKeyboard(context);
+      Navigator.of(context).pop();
     }
   }
 
@@ -45,7 +80,7 @@ class _WeightFormState extends State<WeightForm> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Expanded(
-                flex: 2,
+                flex: 1,
                 child: Container(
                   child: TextFormField(
                     validator: validateWeight,
@@ -62,8 +97,8 @@ class _WeightFormState extends State<WeightForm> {
               Expanded(
                   flex: 1,
                   child: MaterialButton(
-                    onPressed: addRecord,
-                    child: Text("Sacuvaj"),
+                    onPressed: this.widget.isEdit ? editRecord : addRecord,
+                    child: this.widget.isEdit ? Text("Edit") : Text("Save"),
                     color: Colors.yellow,
                   ))
             ],
