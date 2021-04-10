@@ -35,11 +35,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    print("da li se rebuilda");
     String userUid = getUserUid(context);
     return SafeArea(
       child: GestureDetector(
-        // onTap: () => hideKeyboard(context),
         child: Scaffold(
           appBar: AppBar(
             title: Text("Weight Tracker"),

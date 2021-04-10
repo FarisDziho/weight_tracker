@@ -52,6 +52,7 @@ class _WelcomePageState extends State<WelcomePage> {
                         fontFamily: 'nunito',
                         fontSize: 30,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   )));
   }
