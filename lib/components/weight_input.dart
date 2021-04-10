@@ -97,7 +97,7 @@ class _WeightFormState extends State<WeightForm> {
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(5),
-                        helperText: "Unesite kilazu",
+                        helperText: "weight input",
                         hintText: "00.00 Kg"),
                   ),
                 ),
