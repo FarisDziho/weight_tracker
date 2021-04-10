@@ -91,6 +91,7 @@ class _WeightFormState extends State<WeightForm> {
                 flex: 1,
                 child: Container(
                   child: TextFormField(
+                    autofocus: true,
                     validator: validateWeight,
                     controller: _weightController,
                     keyboardType: TextInputType.number,
